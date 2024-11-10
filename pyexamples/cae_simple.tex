@@ -1,0 +1,143 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{../layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\InputColor{rgb:gray,8}
+\def\OutputColor{rgb:gray,3}
+\def\ConvColor{rgb:orange,7;yellow,2;white,1}
+\def\ConvStridedColor{rgb:orange,8;yellow,1;white,1}
+\def\PoolColor{rgb:orange,9;red,3;black,4}
+\def\DeconvColor{rgb:blue,7;cyan,2;white,3}
+\def\DeconvStridedColor{rgb:blue,8;cyan,1;white,1}
+\def\UnpoolColor{rgb:blue,6;cyan,3;black,3}
+\def\SoftmaxActivationColor{rgb:green,1;yellow,9;white,1}
+\def\LeakyReluActivationColor{rgb:green,6;lime,3;white,1}
+\def\TanhActivationColor{rgb:green,1;yellow,9;white,1}
+\def\FlatColor{rgb:purple,7;magenta,3;white,2}
+\def\ReshapeColor{rgb:purple,6;magenta,2;black,5}
+\def\FcColor{rgb:red,7;pink,2;white,1}
+\def\BatchNormColor{rgb:gray,5;white,5}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+\pic[shift={(0,0,0)}] at (0,0,0)
+    {Box={
+        name=input,
+        caption={$x$},
+        xlabel={},
+        zlabel={},
+        fill=\InputColor,
+        height=25,
+        depth=25,
+        width=1
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (input-east)
+    {Box={
+        name=conv1,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\ConvStridedColor,
+        height=20,
+        depth=20,
+        width=3
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (conv1-east)
+    {Box={
+        name=conv2,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\ConvStridedColor,
+        height=15,
+        depth=15,
+        width=6
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (conv2-east)
+    {Box={
+        name=z,
+        caption={$z$},
+        xlabel={},
+        zlabel={},
+        fill=\FlatColor,
+        height=2,
+        depth=2,
+        width=10
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (z-east)
+    {Box={
+        name=deconv1,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\ReshapeColor,
+        height=15,
+        depth=15,
+        width=6
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (deconv1-east)
+    {Box={
+        name=deconv2,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\DeconvStridedColor,
+        height=20,
+        depth=20,
+        width=3
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (deconv2-east)
+    {Box={
+        name=output,
+        caption={$\hat{x}$},
+        xlabel={},
+        zlabel={},
+        fill=\DeconvStridedColor,
+        height=25,
+        depth=25,
+        width=1
+        }
+    };
+    
+        \draw [connection]  (input-east)    -- node {\midarrow} (conv1-west);
+        
+        \draw [connection]  (conv1-east)    -- node {\midarrow} (conv2-west);
+        
+        \draw [connection]  (conv2-east)    -- node {\midarrow} (z-west);
+        
+        \draw [connection]  (z-east)    -- node {\midarrow} (deconv1-west);
+        
+        \draw [connection]  (deconv1-east)    -- node {\midarrow} (deconv2-west);
+        
+        \draw [connection]  (deconv2-east)    -- node {\midarrow} (output-west);
+        
+\node[anchor=north west, align=center, draw=black, fill=white, rounded corners, minimum width=\textwidth, inner sep=5pt]
+    at ([yshift=-1cm]current bounding box.south west) {
+    \begin{tabular}{cccccc}
+    \tikz\draw[fill=\InputColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\ConvStridedColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\DeconvStridedColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\FcColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\FlatColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\ReshapeColor, opacity=0.4] (0,0) rectangle (0.5,0.5); \\
+    \begin{tabular}{c} Input \end{tabular} & \begin{tabular}{c} Strided \\ Convolution \end{tabular} & \begin{tabular}{c} Strided \\ Transposed \\ Convolution \end{tabular} & \begin{tabular}{c} Fully \\ Connected \end{tabular} & \begin{tabular}{c} Flatten \end{tabular} & \begin{tabular}{c} Reshape \end{tabular} \\
+    \end{tabular}
+};
+
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,249 @@
+
+\documentclass[border=8pt, multi, tikz]{standalone} 
+\usepackage{import}
+\subimport{../layers/}{init}
+\usetikzlibrary{positioning}
+\usetikzlibrary{3d} %for including external image 
+
+\def\InputColor{rgb:gray,8}
+\def\OutputColor{rgb:gray,3}
+\def\ConvColor{rgb:orange,7;yellow,2;white,1}
+\def\ConvStridedColor{rgb:orange,8;yellow,1;white,1}
+\def\PoolColor{rgb:orange,9;red,3;black,4}
+\def\DeconvColor{rgb:blue,7;cyan,2;white,3}
+\def\DeconvStridedColor{rgb:blue,8;cyan,1;white,1}
+\def\UnpoolColor{rgb:blue,6;cyan,3;black,3}
+\def\SoftmaxActivationColor{rgb:green,1;yellow,9;white,1}
+\def\LeakyReluActivationColor{rgb:green,6;lime,3;white,1}
+\def\TanhActivationColor{rgb:green,1;yellow,9;white,1}
+\def\FlatColor{rgb:purple,7;magenta,3;white,2}
+\def\ReshapeColor{rgb:purple,6;magenta,2;black,5}
+\def\FcColor{rgb:red,7;pink,2;white,1}
+\def\BatchNormColor{rgb:gray,5;white,5}
+
+\newcommand{\copymidarrow}{\tikz \draw[-Stealth,line width=0.8mm,draw={rgb:blue,4;red,1;green,1;black,3}] (-0.3,0) -- ++(0.3,0);}
+
+\begin{document}
+\begin{tikzpicture}
+\tikzstyle{connection}=[ultra thick,every node/.style={sloped,allow upside down},draw=\edgecolor,opacity=0.7]
+\tikzstyle{copyconnection}=[ultra thick,every node/.style={sloped,allow upside down},draw={rgb:blue,4;red,1;green,1;black,3},opacity=0.7]
+
+\pic[shift={(0,0,0)}] at (0,0,0)
+    {Box={
+        name=input,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\InputColor,
+        height=25,
+        depth=25,
+        width=1
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (input-east)
+    {Box={
+        name=conv1_in,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\ConvColor,
+        height=25,
+        depth=25,
+        width=3
+        }
+    };
+    
+\pic[shift={(0,0,0)}] at (conv1_in-east)
+    {Box={
+        name=conv1_lrelu,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\LeakyReluActivationColor,
+        height=25,
+        depth=25,
+        width=1
+        }
+    };
+    
+\pic[shift={(0,0,0)}] at (conv1_lrelu-east)
+    {Box={
+        name=conv1_out,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\PoolColor,
+        height=20,
+        depth=20,
+        width=3
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (conv1_out-east)
+    {Box={
+        name=conv2_in,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\ConvColor,
+        height=20,
+        depth=20,
+        width=6
+        }
+    };
+    
+\pic[shift={(0,0,0)}] at (conv2_in-east)
+    {Box={
+        name=conv2_lrelu,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\LeakyReluActivationColor,
+        height=20,
+        depth=20,
+        width=1
+        }
+    };
+    
+\pic[shift={(0,0,0)}] at (conv2_lrelu-east)
+    {Box={
+        name=conv2_out,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\PoolColor,
+        height=15,
+        depth=15,
+        width=6
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (conv2_out-east)
+    {Box={
+        name=conv3_in,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\ConvColor,
+        height=15,
+        depth=15,
+        width=12
+        }
+    };
+    
+\pic[shift={(0,0,0)}] at (conv3_in-east)
+    {Box={
+        name=conv3_lrelu,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\LeakyReluActivationColor,
+        height=15,
+        depth=15,
+        width=1
+        }
+    };
+    
+\pic[shift={(0,0,0)}] at (conv3_lrelu-east)
+    {Box={
+        name=conv3_out,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\PoolColor,
+        height=10,
+        depth=10,
+        width=12
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (conv3_out-east)
+    {Box={
+        name=flatten,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\FlatColor,
+        height=2,
+        depth=2,
+        width=10
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (flatten-east)
+    {Box={
+        name=dense,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\FcColor,
+        height=1,
+        depth=1,
+        width=15
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (dense-east)
+    {Box={
+        name=dense2,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\FcColor,
+        height=1,
+        depth=1,
+        width=5
+        }
+    };
+    
+\pic[shift={(2,0,0)}] at (dense2-east)
+    {Box={
+        name=dense3,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\FcColor,
+        height=1,
+        depth=1,
+        width=2
+        }
+    };
+    
+\pic[shift={(0,0,0)}] at (dense3-east)
+    {Box={
+        name=softmax,
+        caption={},
+        xlabel={},
+        zlabel={},
+        fill=\SoftmaxActivationColor,
+        height=1,
+        depth=1,
+        width=2
+        }
+    };
+    
+        \draw [connection]  (input-east)    -- node {\midarrow} (conv1_in-west);
+        
+        \draw [connection]  (conv1_out-east)    -- node {\midarrow} (conv2_in-west);
+        
+        \draw [connection]  (conv2_out-east)    -- node {\midarrow} (conv3_in-west);
+        
+        \draw [connection]  (conv3_out-east)    -- node {\midarrow} (flatten-west);
+        
+        \draw [connection]  (flatten-east)    -- node {\midarrow} (dense-west);
+        
+        \draw [connection]  (dense-east)    -- node {\midarrow} (dense2-west);
+        
+        \draw [connection]  (dense2-east)    -- node {\midarrow} (dense3-west);
+        
+\node[anchor=north west, align=center, draw=black, fill=white, rounded corners, minimum width=\textwidth, inner sep=5pt]
+    at ([yshift=-1cm]current bounding box.south west) {
+    \begin{tabular}{ccccccc}
+    \tikz\draw[fill=\InputColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\ConvColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\PoolColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\FcColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\FlatColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\SoftmaxActivationColor, opacity=0.4] (0,0) rectangle (0.5,0.5); & \tikz\draw[fill=\LeakyReluActivationColor, opacity=0.4] (0,0) rectangle (0.5,0.5); \\
+    \begin{tabular}{c} Input \end{tabular} & \begin{tabular}{c} Convolution \end{tabular} & \begin{tabular}{c} Down- \\ sampling \end{tabular} & \begin{tabular}{c} Fully \\ Connected \end{tabular} & \begin{tabular}{c} Flatten \end{tabular} & \begin{tabular}{c} Softmax  \\  Activation \end{tabular} & \begin{tabular}{c} Leaky ReLU  \\  Activation \end{tabular} \\
+    \end{tabular}
+};
+
+\end{tikzpicture}
+\end{document}
